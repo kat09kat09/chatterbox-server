@@ -11,13 +11,10 @@
     "mocha": "^1.21.4",
     "request": "^2.34.0",
     "chai": "^1.9.0"
-<<<<<<< HEAD
   },
   "dependencies": {
     "chai": "^1.10.0",
     "mocha": "^1.21.5",
     "request": "^2.67.0"
-=======
->>>>>>> 148ed9ee999fb296115fda97b9bb3afaeb505e09
   }
 }

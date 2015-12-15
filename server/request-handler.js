@@ -11,14 +11,15 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-<<<<<<< HEAD
 var obj = { results: [] };
+var fs = require('fs');
+
+// var messages = require('./messages.js');
+// var loggedMessages = messages.loggedMessages;
+// console.log(loggedMessages)
+
 
 exports.requestHandler = function(request, response, body) {
-=======
-
-var requestHandler = function(request, response) {
->>>>>>> 148ed9ee999fb296115fda97b9bb3afaeb505e09
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -33,88 +34,60 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
-<<<<<<< HEAD
   // console.log('what is body', body);
   console.log("Serving request type " + request.method + " for url " + request.url);
-
-
-  // console.log('what is request',request);
-
-  // The outgoing status.
-  // var statusCode = 200;
-=======
-  console.log("Serving request type " + request.method + " for url " + request.url);
-
-  // The outgoing status.
-  var statusCode = 200;
->>>>>>> 148ed9ee999fb296115fda97b9bb3afaeb505e09
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
 
-  // Tell the client we are sending them plain text.
-  //
-  // You will need to change this if you are sending something
-  // other than plain text, like JSON or HTML.
-<<<<<<< HEAD
-  headers['Content-Type'] = "application/JSON";
-
+  headers['Content-Type'] = "application/json";
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  // response.writeHead(statusCode, headers);
-  console.log('request.url value: ', request.url);
+
+  //If the url doesn't exist, then serve a 404
   if ( request.url !== '/classes/messages') {
-    console.log('getting stuck at 404');
     response.writeHead(404);
     response.end();
   }
-  //*********example from online website
-  if(request.method == 'OPTIONS') {
-    console.log('options response');
-     response.writeHead(200, {'Content-Type': 'application/json',
-                              'Accept': 'application/json',
-                              "Access-Control-Allow-Origin": "*",
-                              "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                              "Access-Control-Allow-Headers": "content-type, accept",
-                              "Access-Control-Max-Age": 10
-      });
-     response.end(JSON.stringify({ results: []  }));
 
-  } else if (request.method == 'POST') {
-    //console.log('post response');
-
-    // pipe the request data to the console
-    // request.pipe(process.stdout);
-    // var obj = {results: []};
-
-    // pipe the request data to the response to view on the web
-    response.writeHead(201, {'Content-Type': 'application/json'});
+  //Handling different types of requests:
+  if(request.method === 'OPTIONS') {
+     response.writeHead(200, headers);
+     response.end(JSON.stringify(obj));
+  } else if (request.method === 'POST') {
+    response.writeHead(201, headers);
 
     request.on('data', function(chunk) {
-      console.log("Received body data:", JSON.parse(chunk.toString('utf8')));
-      obj['results'].push(JSON.parse(chunk.toString('utf8')));
-
-
-
+      var message = JSON.parse(chunk.toString('utf8'));
+      obj['results'].push(message);
+      console.log('obj:', obj);
+      fs.appendFile('./messages.js', JSON.stringify(message)+',', function() {
+        console.log('Appended file');
+      });
     });
+
     response.end(JSON.stringify(obj));
 
   } else {
-    console.log('everything else response');
-    // for GET requests, serve up the contents in 'index.html'
-    response.writeHead(200, {'Content-Type': 'application/json'});
-    response.end(JSON.stringify(obj));
+    // var messageToSend = loggedMessages.split(',');
+    // console.log('messageToSend', messageToSend.length);
+
+    fs.readFile('./messages.js', function (err,data) {
+      if(err) console.log(err);
+      var messageList = data.toString('utf8')
+                            .split('\n')
+                            .map(function(item) {
+                              return JSON.parse(item);
+                            });
+      var obj= {results: messageList}
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(obj));
+
+    });
+
   }
 
-  ///*************
-=======
-  headers['Content-Type'] = "text/plain";
-
-  // .writeHead() writes to the request line and headers of the response,
-  // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
->>>>>>> 148ed9ee999fb296115fda97b9bb3afaeb505e09
 
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
@@ -123,11 +96,6 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-<<<<<<< HEAD
-  //response.end(JSON.stringify({ a: 1 }));
-=======
-  response.end("Hello, World!");
->>>>>>> 148ed9ee999fb296115fda97b9bb3afaeb505e09
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
