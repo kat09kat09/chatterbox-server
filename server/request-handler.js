@@ -79,7 +79,7 @@ exports.requestHandler = function(request, response, body) {
     response.writeHead(201, {'Content-Type': 'application/json'});
 
     request.on('data', function(chunk) {
-      console.log("Received body data:", typeof JSON.parse(chunk.toString('utf8')));
+      console.log("Received body data:", JSON.parse(chunk.toString('utf8')));
       obj['results'].push(JSON.parse(chunk.toString('utf8')));
 
 
