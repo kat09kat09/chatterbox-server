@@ -40,7 +40,7 @@ $(function() {
           //data: { order: '-createdAt', limit: 50 },
           contentType: 'application/json',
           success: function(data) {
-            console.log('success...server heard me');
+            console.log(data);
             app.populateMessages(data.results);
             app.populateRooms(data.results);
           },
