@@ -62,7 +62,7 @@ exports.requestHandler = function(request, response, body) {
       var message = JSON.parse(chunk.toString('utf8'));
       obj['results'].push(message);
       console.log('obj:', obj);
-      fs.appendFile('./messages.js', JSON.stringify(message)+',', function() {
+      fs.appendFile('./messages.js', JSON.stringify(message)+'\n', function() {
         console.log('Appended file');
       });
     });
@@ -77,8 +77,12 @@ exports.requestHandler = function(request, response, body) {
       if(err) console.log(err);
       var messageList = data.toString('utf8')
                             .split('\n')
+                            .slice(0,-1)
                             .map(function(item) {
-                              return JSON.parse(item);
+                              if(item) {
+                                 return JSON.parse(item);
+                              }
+
                             });
       var obj= {results: messageList}
       response.writeHead(200, headers);
