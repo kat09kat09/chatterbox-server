@@ -71,6 +71,7 @@ $(function() {
 
     populateMessages: function(results) {
       var byRoom;
+      console.log('calling populateMessages with: ', typeof results);
       app.clearMessages();
       //filter by roomname
       byRoom = _.filter(results, function(result) {
